@@ -1,0 +1,7 @@
+<!-- for debugging -->
+<launch>
+    <rosparam file="$(find dynamixel_ros_control)/config/controller.yaml" command="load"/>
+
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="true"
+                output="screen"  args="joint_state_controller"/>
+</launch>

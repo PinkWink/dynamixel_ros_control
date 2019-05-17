@@ -1,0 +1,62 @@
+dynamixel_hw:
+  - body_rotate
+  - elevation
+  - arm_trans
+  - arm1
+  - arm2
+  - arm3
+  - arm4
+  - arm5
+  - arm6
+  - gripper
+
+body_rotate:
+  id: 1
+  operating_mode: 1
+  joint_name: body_rotate_joint
+
+elevation:
+  id: 4
+  operating_mode: 1
+  joint_name: trans_module_elv_joint
+
+arm_trans:
+  id: 5
+  operating_mode: 1
+  joint_name: arm_base_joint
+
+arm1:
+  id: 9
+  operating_mode: 1
+  joint_name: arm_joint1
+
+arm2:
+  id: 10
+  operating_mode: 1
+  joint_name: arm_joint2
+
+arm3:
+  id: 11
+  operating_mode: 1
+  joint_name: arm_joint3
+
+arm4:
+  id: 12
+  operating_mode: 1
+  joint_name: arm_joint4
+
+arm5:
+  id: 13
+  operating_mode: 1
+  joint_name: arm_joint5
+
+arm6:
+  id: 14
+  operating_mode: 1
+  joint_name: arm_joint6
+
+gripper:
+  id: 15
+  operating_mode: 1
+  joint_name: gripper
+

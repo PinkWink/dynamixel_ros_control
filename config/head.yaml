@@ -1,0 +1,13 @@
+dynamixel_hw:
+  - screen_tilt
+  - pan
+  - tilt
+
+screen_tilt:
+  id: 1
+
+pan:
+  id: 6
+
+tilt:
+  id: 7

@@ -13,7 +13,9 @@ int main(int argc, char** argv)
 
     double control_frequency = 0.0;
     pnh.param<double>("rate", control_frequency, 100.0);
+
     DynamixelHWInterface dynamixels;
+    dynamixels.init(nh, pnh);
     controller_manager::ControllerManager cm(&dynamixels, nh);
 
     ros::Duration period(1.0/control_frequency);

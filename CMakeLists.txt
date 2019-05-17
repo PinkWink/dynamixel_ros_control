@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(dynamixel_ros_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -137,6 +137,7 @@ include_directories(
 add_executable(${PROJECT_NAME}_node
 src/dynamixel_ros_control_node.cpp
 src/dynamixel_hw_interface.cpp
+src/dynamixel_motor.cpp
 )
 
 ## Rename C++ executable without prefix
