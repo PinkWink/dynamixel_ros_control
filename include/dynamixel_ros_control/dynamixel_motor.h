@@ -18,7 +18,8 @@ public:
 public:
     bool init(int model_number, std::string name);
     bool update();
-    bool write();
+    bool write(double cmd);
+    void stop();
 
     std::string get_joint_name();
     void get_current_value(double &pos, double &vel, double &effort);
@@ -37,6 +38,7 @@ private:
     double joint_inverse_;
     int motor_id_;
     int operating_mode_;
+    double profile_acceleration_;
 
     double joint_pos_;
     double joint_vel_;

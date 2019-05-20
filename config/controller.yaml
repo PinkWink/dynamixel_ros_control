@@ -1,3 +1,15 @@
 joint_state_controller:
   type: joint_state_controller/JointStateController
   publish_rate: 50
+
+wheel1_controller:
+  type: velocity_controllers/JointVelocityController
+  joint: omni_wheel_1_joint
+
+wheel2_controller:
+  type: velocity_controllers/JointVelocityController
+  joint: omni_wheel_2_joint
+
+wheel3_controller:
+  type: velocity_controllers/JointVelocityController
+  joint: omni_wheel_3_joint

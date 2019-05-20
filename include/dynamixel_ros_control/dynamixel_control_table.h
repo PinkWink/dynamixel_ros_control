@@ -16,6 +16,7 @@ enum class DynamixelControlTableItem
 {
     OPERATING_MODE,
     TORQUE_ENABLE,
+    GOAL_CURRENT,
     GOAL_VELOCITY,
     PROFILE_ACCELERATION,
     PROFILE_VELOCITY,
@@ -67,6 +68,7 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
     {DynamixelSeries::SERIES_ROBOTIS_HAND, {
         {DynamixelControlTableItem::OPERATING_MODE,        11},
         {DynamixelControlTableItem::TORQUE_ENABLE,         64},
+        {DynamixelControlTableItem::GOAL_CURRENT,          102},
         {DynamixelControlTableItem::GOAL_VELOCITY,         104},
         {DynamixelControlTableItem::PROFILE_ACCELERATION,  108},
         {DynamixelControlTableItem::PROFILE_VELOCITY,      112},
@@ -80,6 +82,7 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
     {DynamixelSeries::SERIES_DYNAMIXEL_X, {
         {DynamixelControlTableItem::OPERATING_MODE,        11},
         {DynamixelControlTableItem::TORQUE_ENABLE,         64},
+        {DynamixelControlTableItem::GOAL_CURRENT,          102},
         {DynamixelControlTableItem::GOAL_VELOCITY,         104},
         {DynamixelControlTableItem::PROFILE_ACCELERATION,  108},
         {DynamixelControlTableItem::PROFILE_VELOCITY,      112},
@@ -93,6 +96,7 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
     {DynamixelSeries::SERIES_DYNAMIXEL_PRO, {
         {DynamixelControlTableItem::OPERATING_MODE,        11},
         {DynamixelControlTableItem::TORQUE_ENABLE,         562},
+        {DynamixelControlTableItem::GOAL_CURRENT,          550},
         {DynamixelControlTableItem::GOAL_VELOCITY,         600},
         {DynamixelControlTableItem::PROFILE_ACCELERATION,  606},
         {DynamixelControlTableItem::PROFILE_VELOCITY,      600},
@@ -106,6 +110,7 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
     {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, {
         {DynamixelControlTableItem::OPERATING_MODE,        11},
         {DynamixelControlTableItem::TORQUE_ENABLE,         512},
+        {DynamixelControlTableItem::GOAL_CURRENT,          550},
         {DynamixelControlTableItem::GOAL_VELOCITY,         552},
         {DynamixelControlTableItem::PROFILE_ACCELERATION,  556},
         {DynamixelControlTableItem::PROFILE_VELOCITY,      560},

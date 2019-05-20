@@ -34,6 +34,7 @@ class DynamixelHWInterface: public hardware_interface::RobotHW
         hardware_interface::JointStateInterface jnt_state_interface_;
         hardware_interface::PositionJointInterface jnt_pos_interface_;
         hardware_interface::VelocityJointInterface jnt_vel_interface_;
+        hardware_interface::EffortJointInterface jnt_eff_interface_;
 
         std::vector<double> joint_cmd_;
         std::vector<double> joint_pos_;
