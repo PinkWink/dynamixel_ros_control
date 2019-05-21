@@ -1,7 +1,7 @@
 dynamixel_hw:
   - body_rotate
   - elevation
-  - arm_trans
+  - arm_base
   - arm1
   - arm2
   - arm3
@@ -10,53 +10,89 @@ dynamixel_hw:
   - arm6
   - gripper
 
+# operating_mode = # 0: Current, 1: Velocity, 3: Position, 4: Ext. Position, 5: Current based Position Control, 16: PWM
+# joint_name: match URDF joint_name
+# gear_ratio
+# inverse: control the direction of motors
+# profile_acceleration: (rad/s)
+
 body_rotate:
   id: 1
-  operating_mode: 1
+  operating_mode: 4
   joint_name: body_rotate_joint
+  gear_ratio: 2.5
+  inverse: 1.0
+  profile_acceleration: 0.6
 
 elevation:
   id: 4
-  operating_mode: 1
-  joint_name: trans_module_elv_joint
+  operating_mode: 4
+  joint_name: elavation_joint
+  gear_ratio: 1.0
+  inverse: 1.0
+  profile_acceleration: 1.0
 
-arm_trans:
+arm_base:
   id: 5
-  operating_mode: 1
+  operating_mode: 4
   joint_name: arm_base_joint
+  gear_ratio: 1.0
+  inverse: 1.0
+  profile_acceleration: 1.0
 
 arm1:
   id: 9
-  operating_mode: 1
-  joint_name: arm_joint1
+  operating_mode: 3
+  joint_name: arm1_joint
+  gear_ratio: 1.0
+  inverse: 1.0
+  profile_acceleration: 1.0
 
 arm2:
   id: 10
-  operating_mode: 1
-  joint_name: arm_joint2
+  operating_mode: 3
+  joint_name: arm2_joint
+  gear_ratio: 1.0
+  inverse: -1.0
+  profile_acceleration: 1.0
 
 arm3:
   id: 11
-  operating_mode: 1
-  joint_name: arm_joint3
+  operating_mode: 3
+  joint_name: arm3_joint
+  gear_ratio: 1
+  inverse: -1.0
+  profile_acceleration: 1.0
 
 arm4:
   id: 12
-  operating_mode: 1
-  joint_name: arm_joint4
+  operating_mode: 3
+  joint_name: arm4_joint
+  gear_ratio: 1
+  inverse: -1.0
+  profile_acceleration: 1.0
 
 arm5:
   id: 13
-  operating_mode: 1
-  joint_name: arm_joint5
+  operating_mode: 3
+  joint_name: arm5_joint
+  gear_ratio: 1.0
+  inverse: -1.0
+  profile_acceleration: 1.0
 
 arm6:
   id: 14
-  operating_mode: 1
-  joint_name: arm_joint6
+  operating_mode: 3
+  joint_name: arm6_joint
+  gear_ratio: 1.0
+  inverse: 1.0
+  profile_acceleration: 1.0
 
 gripper:
   id: 15
-  operating_mode: 1
-  joint_name: gripper
+  operating_mode: 5
+  joint_name: gripper_joint
+  gear_ratio: 1.0
+  inverse: 1.0
+  profile_acceleration: 0
 

@@ -3,7 +3,7 @@ dynamixel_hw:
   - wheel2
   - wheel3
 
-# operating_mode = # 0: Current, 1: Velocity, 3: Position, 4: Ext. Position, 16: PWM
+# operating_mode = # 0: Current, 1: Velocity, 3: Position, 4: Ext. Position, 5: Current based Position Control, 16: PWM
 # joint_name: match URDF joint_name
 # gear_ratio
 # inverse: control the direction of motors

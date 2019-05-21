@@ -1,0 +1,43 @@
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+body_rotate_controller:
+  type: position_controllers/JointPositionController
+  joint: body_rotate_joint
+
+elevation_controller:
+  type: position_controllers/JointPositionController
+  joint: elavation_joint
+
+arm_base_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_base_joint
+
+arm1_controller:
+  type: position_controllers/JointPositionController
+  joint: arm1_joint
+
+arm2_controller:
+  type: position_controllers/JointPositionController
+  joint: arm2_joint
+
+arm3_controller:
+  type: position_controllers/JointPositionController
+  joint: arm3_joint
+
+arm4_controller:
+  type: position_controllers/JointPositionController
+  joint: arm4_joint
+
+arm5_controller:
+  type: position_controllers/JointPositionController
+  joint: arm5_joint
+
+arm6_controller:
+  type: position_controllers/JointPositionController
+  joint: arm6_joint
+
+gripper_controller:
+  type: position_controllers/JointPositionController
+  joint: gripper_joint

@@ -127,6 +127,7 @@ bool DynamixelHWInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot
                 }
             case 3: // position
             case 4: // ext. position
+            case 5: // current based position
                 {
                     hardware_interface::JointHandle pos_handle(jnt_state_interface_.getHandle(motor->get_joint_name()), &joint_cmd_[i]);
                     jnt_pos_interface_.registerHandle(pos_handle);

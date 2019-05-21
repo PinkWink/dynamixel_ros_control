@@ -57,7 +57,7 @@ static std::map<DynamixelSeries, int> DynamixelReadStartAddress =
 
 static std::map<DynamixelSeries, int> DynamixelReadLength =
 {
-    {DynamixelSeries::SERIES_ROBOTIS_HAND, 14},
+    {DynamixelSeries::SERIES_ROBOTIS_HAND, 13},
     {DynamixelSeries::SERIES_DYNAMIXEL_X, 14},
     {DynamixelSeries::SERIES_DYNAMIXEL_PRO, 11},
     {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, 14},
@@ -67,16 +67,16 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
 {
     {DynamixelSeries::SERIES_ROBOTIS_HAND, {
         {DynamixelControlTableItem::OPERATING_MODE,        11},
-        {DynamixelControlTableItem::TORQUE_ENABLE,         64},
-        {DynamixelControlTableItem::GOAL_CURRENT,          102},
-        {DynamixelControlTableItem::GOAL_VELOCITY,         104},
-        {DynamixelControlTableItem::PROFILE_ACCELERATION,  108},
-        {DynamixelControlTableItem::PROFILE_VELOCITY,      112},
-        {DynamixelControlTableItem::GOAL_POSITION,         116},
-        {DynamixelControlTableItem::MOVING,                122},
-        {DynamixelControlTableItem::PRESENT_CURRENT,       126},
-        {DynamixelControlTableItem::PRESENT_VELOCITY,      128},
-        {DynamixelControlTableItem::PRESENT_POSITION,      132}
+        {DynamixelControlTableItem::TORQUE_ENABLE,         562},
+        {DynamixelControlTableItem::GOAL_CURRENT,          604},
+        {DynamixelControlTableItem::GOAL_VELOCITY,         600},
+        {DynamixelControlTableItem::PROFILE_ACCELERATION,  606},
+        {DynamixelControlTableItem::PROFILE_VELOCITY,      600},
+        {DynamixelControlTableItem::GOAL_POSITION,         596},
+        {DynamixelControlTableItem::MOVING,                601},
+        {DynamixelControlTableItem::PRESENT_CURRENT,       621},
+        {DynamixelControlTableItem::PRESENT_VELOCITY,      615},
+        {DynamixelControlTableItem::PRESENT_POSITION,      611}
     }},
 
     {DynamixelSeries::SERIES_DYNAMIXEL_X, {
@@ -121,9 +121,5 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
         {DynamixelControlTableItem::PRESENT_POSITION,      580}
     }},
 };
-
-// different lenth?
-// different member?
-
 
 #endif //DYNAMIXEL_CONTROL_TABLE_H_
