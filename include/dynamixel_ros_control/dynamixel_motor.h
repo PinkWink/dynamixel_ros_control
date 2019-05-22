@@ -1,13 +1,16 @@
 #ifndef DYNAMIXEL_MOTOR_H_
 #define DYNAMIXEL_MOTOR_H_
 
+#include <ros/ros.h>
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "dynamixel_ros_control/dynamixel_info.h"
 #include "dynamixel_ros_control/dynamixel_control_table.h"
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
-#include <ros/ros.h>
+#include "dynamixel_ros_control/HomingAction.h"
+#include <actionlib/server/simple_action_server.h>
+
 
 class DynamixelMotor
 {
@@ -24,6 +27,9 @@ public:
     std::string get_joint_name();
     void get_current_value(double &pos, double &vel, double &effort);
 
+public:
+    void execute_homing(const dynamixel_ros_control::HomingGoalConstPtr &goal);
+
 private:
     dynamixel::PortHandler *portHandler_;
     dynamixel::PacketHandler *packetHandler_;
@@ -39,6 +45,9 @@ private:
     int motor_id_;
     int operating_mode_;
     double profile_acceleration_;
+
+    boost::shared_ptr<actionlib::SimpleActionServer<dynamixel_ros_control::HomingAction>> homing_as_;
+    bool is_homing_ = false;
 
     double joint_pos_;
     double joint_vel_;

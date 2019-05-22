@@ -1,6 +1,7 @@
 #include "dynamixel_ros_control/dynamixel_control_table.h"
 #include "dynamixel_ros_control/dynamixel_motor.h"
 
+
 DynamixelMotor::DynamixelMotor(dynamixel::PortHandler *port, dynamixel::PacketHandler* packet, dynamixel::GroupBulkRead *read, dynamixel::GroupBulkWrite *write)
 {
     portHandler_ = port;
@@ -21,6 +22,7 @@ DynamixelMotor::~DynamixelMotor()
 
 bool DynamixelMotor::init(int model_number, std::string name)
 {
+    ros::NodeHandle nh;
     ros::NodeHandle pnh("~");
     motor_name_ = name;
     motor_model_num_ = model_number;
@@ -32,6 +34,16 @@ bool DynamixelMotor::init(int model_number, std::string name)
     pnh.getParam(name + "/gear_ratio", joint_gear_ratio_);
     pnh.getParam(name + "/inverse", joint_inverse_);
     pnh.getParam(name + "/profile_acceleration", profile_acceleration_);
+
+    bool homing = false;
+    ros::param::param<bool>(name + "/homing", false);
+    if(homing)
+    {
+        ROS_INFO("[%s] homing.", motor_name_.c_str());
+        is_homing_ = false;
+        homing_as_ = boost::make_shared<actionlib::SimpleActionServer<dynamixel_ros_control::HomingAction>>(nh, name + "/homing", boost::bind(&DynamixelMotor::execute_homing, this, _1), false);
+		homing_as_->start();
+    }
 
 
     uint8_t dxl_error = 0;
@@ -142,6 +154,11 @@ bool DynamixelMotor::update()
                 break;
         }
     }
+}
+
+void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConstPtr &goal)
+{
+
 }
 
 bool DynamixelMotor::write(double cmd)
