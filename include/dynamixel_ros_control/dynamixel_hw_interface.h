@@ -22,6 +22,9 @@ class DynamixelHWInterface: public hardware_interface::RobotHW
         virtual bool prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list, const std::list<hardware_interface::ControllerInfo>& stop_list);
         virtual void doSwitch(const std::list<hardware_interface::ControllerInfo>& start_list, const std::list<hardware_interface::ControllerInfo>& stop_list);
 
+    public:
+        bool is_ready();
+
     private:
         dynamixel::PortHandler *portHandler_;
         dynamixel::PacketHandler *packetHandler_;

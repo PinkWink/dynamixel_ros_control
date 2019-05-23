@@ -18,6 +18,11 @@ int main(int argc, char** argv)
     dynamixels.init(nh, pnh);
     controller_manager::ControllerManager cm(&dynamixels, nh);
 
+    ROS_INFO("wait for ready dynamixels");
+    while(!dynamixels.is_ready() && ros::ok())
+        ros::Duration(0.1).sleep();
+
+    ROS_INFO("ready.");
     ros::Duration period(1.0/control_frequency);
     while(ros::ok())
     {

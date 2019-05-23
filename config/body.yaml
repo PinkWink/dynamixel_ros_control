@@ -30,7 +30,7 @@ elevation:
   id: 4
   operating_mode: 4
   joint_name: elavation_joint
-  gear_ratio: 1.0
+  gear_ratio: 27.5
   inverse: 1.0
   profile_acceleration: 1.0
   homing: true

@@ -16,6 +16,17 @@ DynamixelHWInterface::~DynamixelHWInterface() {
     }
 }
 
+bool DynamixelHWInterface::is_ready()
+{
+    bool result = true;
+    for(size_t i = 0; i < dynamixel_motors_.size(); i++)
+    {
+        result = result && dynamixel_motors_[i]->is_ready();
+    }
+
+    return result;
+}
+
 bool DynamixelHWInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
 {
     // get port name

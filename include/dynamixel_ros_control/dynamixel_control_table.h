@@ -2,6 +2,7 @@
 #define DYNAMIXEL_CONTROL_TABLE_H_
 
 #include <map>
+#include <math.h>
 #include <dynamixel_ros_control/dynamixel_info.h>
 
 enum class DynamixelSeries
@@ -120,6 +121,42 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
         {DynamixelControlTableItem::PRESENT_VELOCITY,      576},
         {DynamixelControlTableItem::PRESENT_POSITION,      580}
     }},
+};
+
+static std::map<DynamixelSeries, double> DynamixelCurrentConvert =
+{
+    {DynamixelSeries::SERIES_ROBOTIS_HAND, (2.69 / 1000.0)},
+    {DynamixelSeries::SERIES_DYNAMIXEL_X, (2.69 / 1000.0)},
+    {DynamixelSeries::SERIES_DYNAMIXEL_PRO, (16.11328 / 1000.0)},
+    {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, (1.0 / 1000.0)},
+};
+
+static std::map<DynamixelSeries, double> DynamixelVeolcityConvert =
+{
+    {DynamixelSeries::SERIES_ROBOTIS_HAND, (0.229 * M_PI / 60.0)},
+    {DynamixelSeries::SERIES_DYNAMIXEL_X, (0.229 * M_PI / 60.0)},
+    {DynamixelSeries::SERIES_DYNAMIXEL_PRO, (0.00199234 * M_PI / 60.0)},
+    {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, (0.01 * M_PI / 60.0)},
+};
+
+static std::map<int, double> DynamixelPositionConvert =
+{
+    {XL430_W250, 0.0},
+    {XM430_W210, 0.0},
+    {XM430_W350, 0.0},
+    {XM540_W150, 0.0},
+    {XM540_W270, 0.0},
+    {XH430_V210, 0.0},
+    {XH430_V350, 0.0},
+    {XH430_W210, 0.0},
+    {XH430_W350, 0.0},
+    {PRO_H42_20_S300_R, (M_PI / 151875.0)},
+    {PRO_H54_100_S500_R, (M_PI / 250961.5)},
+    {PRO_H54_200_S500_R, (M_PI / 250961.5)},
+    {PRO_PLUS_H42P_020_S300_R, (M_PI / 303750.0)},
+    {PRO_PLUS_H54P_100_S500_R, (M_PI / 501923.0)},
+    {PRO_PLUS_H54P_200_S500_R, (M_PI / 501923.0)},
+    {ROBOTIS_HAND_RH_P12_RN, 0.0},
 };
 
 #endif //DYNAMIXEL_CONTROL_TABLE_H_

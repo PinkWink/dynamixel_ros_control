@@ -24,11 +24,13 @@ public:
     bool write(double cmd);
     void stop();
 
+    bool is_ready();
     std::string get_joint_name();
     void get_current_value(double &pos, double &vel, double &effort);
 
-public:
+private:
     void execute_homing(const dynamixel_ros_control::HomingGoalConstPtr &goal);
+    bool init_and_ready(bool skip_read_register);
 
 private:
     dynamixel::PortHandler *portHandler_;
@@ -47,7 +49,11 @@ private:
     double profile_acceleration_;
 
     boost::shared_ptr<actionlib::SimpleActionServer<dynamixel_ros_control::HomingAction>> homing_as_;
-    bool is_homing_ = false;
+    bool need_homing_;
+    bool is_ready_;
+    bool is_homing_;
+    int homing_mode_;
+    int homing_direction_;
 
     double joint_pos_;
     double joint_vel_;
