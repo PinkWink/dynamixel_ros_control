@@ -47,13 +47,21 @@ private:
     int motor_id_;
     int operating_mode_;
     double profile_acceleration_;
+    double profile_velocity_;
 
     boost::shared_ptr<actionlib::SimpleActionServer<dynamixel_ros_control::HomingAction>> homing_as_;
     bool need_homing_;
     bool is_ready_;
     bool is_homing_;
     int homing_mode_;
-    int homing_direction_;
+    double homing_direction_;
+    double homing_max_speed_;
+    double homing_current_limit_;
+    double homing_offset_;
+
+    bool is_gripper_;
+    double gripper_gap_size_;
+    double gripper_current_limit_;
 
     double joint_pos_;
     double joint_vel_;

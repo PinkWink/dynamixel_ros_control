@@ -17,6 +17,9 @@ DynamixelMotor::DynamixelMotor(dynamixel::PortHandler *port, dynamixel::PacketHa
 
     is_ready_ = true;
     is_homing_ = false;
+    homing_offset_ = 0.0;
+
+    is_gripper_ = false;
 }
 
 DynamixelMotor::~DynamixelMotor()
@@ -37,12 +40,19 @@ bool DynamixelMotor::init(int model_number, std::string name)
     pnh.getParam(name + "/gear_ratio", joint_gear_ratio_);
     pnh.getParam(name + "/inverse", joint_inverse_);
     pnh.getParam(name + "/profile_acceleration", profile_acceleration_);
+    pnh.getParam(name + "/profile_velocity", profile_velocity_);
 
-    pnh.param<bool>(name + "/homing", need_homing_, false);
+    pnh.param<bool>(name + "/homing/enable", need_homing_, false);
     if(need_homing_)
     {
-        pnh.getParam(name + "/homing_mode", homing_mode_);
-        pnh.getParam(name + "/homing_direction", homing_direction_);
+        if(!pnh.getParam(name + "/homing/mode", homing_mode_))
+        {
+            ROS_ERROR("[%s] please set parameter homing/mode.", motor_name_.c_str());
+            return false;
+        }
+        pnh.param<double>(name + "/homing/direction", homing_direction_, 1.0);
+        pnh.param<double>(name + "/homing/max_speed", homing_max_speed_, 0.002);
+        pnh.param<double>(name + "/homing/current_limit", homing_current_limit_, 2.0);
 
         ROS_INFO("[%s] motor need homing.", motor_name_.c_str());
         is_homing_ = false;
@@ -50,6 +60,13 @@ bool DynamixelMotor::init(int model_number, std::string name)
 		homing_as_->start();
 
         is_ready_ = false;
+    }
+
+    pnh.param<bool>(name + "/gripper/enable", is_gripper_, false);
+    if(is_gripper_)
+    {
+        pnh.param<double>(name + "/gripper/gap_size", gripper_gap_size_, 0.0);
+        pnh.param<double>(name + "/gripper/current_limit", gripper_current_limit_, 1.0);
     }
 
     return init_and_ready(false);
@@ -90,11 +107,31 @@ bool DynamixelMotor::init_and_ready(bool skip_read_register)
     }
 
     // set profile_accelration
-    uint32_t target_acceleration = profile_acceleration_ / (0.01 * M_PI / 60.0) * joint_gear_ratio_;
+    uint32_t target_acceleration = profile_acceleration_ / DynamixelVeolcityConvert[dynamixel_series_] * joint_gear_ratio_;
     if(packetHandler_->write4ByteTxRx(portHandler_, motor_id_, DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PROFILE_ACCELERATION], target_acceleration, &dxl_error) != COMM_SUCCESS)
     {
-        ROS_ERROR("Failed to set torque enable [%d] on [%s].", motor_id_, motor_name_.c_str());
+        ROS_ERROR("Failed to set profile acceleration [%d] on [%s].", motor_id_, motor_name_.c_str());
         return false;
+    }
+
+    // set velocity limit
+    uint32_t target_profile_velocity = profile_velocity_ / DynamixelVeolcityConvert[dynamixel_series_] * joint_gear_ratio_;
+    if(packetHandler_->write4ByteTxRx(portHandler_, motor_id_, DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PROFILE_VELOCITY], target_profile_velocity, &dxl_error) != COMM_SUCCESS)
+    {
+        ROS_ERROR("Failed to set profile velocity [%d] on [%s].", motor_id_, motor_name_.c_str());
+        return false;
+    }
+
+    if(is_gripper_)
+    {
+        uint16_t current_limit = 0;
+        current_limit = (uint16_t)(gripper_current_limit_ / DynamixelCurrentConvert[dynamixel_series_]);
+        if(packetHandler_->write2ByteTxRx(portHandler_, motor_id_,
+            DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_CURRENT], current_limit, &dxl_error) != COMM_SUCCESS)
+        {
+            ROS_ERROR("Failed to set operating mode [%d] on [%s].", motor_id_, motor_name_.c_str());
+            return false;
+        }
     }
 
     // register for status reading.
@@ -110,30 +147,17 @@ bool DynamixelMotor::init_and_ready(bool skip_read_register)
 
 bool DynamixelMotor::update()
 {
-    //ROS_INFO("[%s] update", motor_name_.c_str());
-
     if(groupBulkRead_->isAvailable(motor_id_,
             DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_POSITION], 4))
     {
         int32_t position = groupBulkRead_->getData(motor_id_,
                 DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_POSITION], 4);
 
-        switch(motor_model_num_)
+        joint_pos_ = (position * DynamixelPositionConvert[motor_model_num_] / joint_gear_ratio_ * joint_inverse_) - homing_offset_;
+
+        if(is_gripper_)
         {
-            case PRO_PLUS_H54P_200_S500_R:
-            case PRO_PLUS_H54P_100_S500_R:
-                joint_pos_ = position * M_PI / 501923.0 / joint_gear_ratio_ * joint_inverse_;
-                break;
-            case PRO_PLUS_H42P_020_S300_R:
-                joint_pos_ = position * M_PI / 303750.0 / joint_gear_ratio_ * joint_inverse_;
-                break;
-            case PRO_H54_200_S500_R:
-            case PRO_H54_100_S500_R:
-                joint_pos_ = position * M_PI / 250961.5 / joint_gear_ratio_ * joint_inverse_;
-                break;
-            case PRO_H42_20_S300_R:
-                joint_pos_ = position * M_PI / 151875.0 / joint_gear_ratio_ * joint_inverse_;
-                break;
+            joint_pos_ = (gripper_gap_size_ - joint_pos_) / gripper_gap_size_;
         }
     }
 
@@ -143,18 +167,7 @@ bool DynamixelMotor::update()
         int32_t velocity = groupBulkRead_->getData(motor_id_,
                 DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_VELOCITY], 4);
 
-        switch(dynamixel_series_)
-        {
-            case DynamixelSeries::SERIES_DYNAMIXEL_X:
-                joint_vel_ = velocity * 0.229 * M_PI / 60.0 / joint_gear_ratio_ * joint_inverse_;
-                break;
-            case DynamixelSeries::SERIES_DYNAMIXEL_PRO:
-                joint_vel_ = velocity * 0.00199234 * M_PI / 60.0 / joint_gear_ratio_ * joint_inverse_;
-                break;
-            case DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS:
-                joint_vel_ = velocity * 0.01 * M_PI / 60.0 / joint_gear_ratio_ * joint_inverse_;
-                break;
-        }
+        joint_vel_ = velocity * DynamixelVeolcityConvert[dynamixel_series_] / joint_gear_ratio_ * joint_inverse_;
     }
 
     int16_t read_current = 0;
@@ -164,17 +177,7 @@ bool DynamixelMotor::update()
         read_current = groupBulkRead_->getData(motor_id_,
             DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_CURRENT], 2);
 
-        switch(dynamixel_series_) {
-            case DynamixelSeries::SERIES_DYNAMIXEL_X:
-                joint_eff_ = read_current * (2.69 / 1000.0) * joint_inverse_;
-                break;
-            case DynamixelSeries::SERIES_DYNAMIXEL_PRO:
-                joint_eff_ = read_current * (16.11328 / 1000.0) * joint_inverse_;
-                break;
-            case DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS:
-                joint_eff_ = read_current * (1.0 / 1000.0) * joint_inverse_;
-                break;
-        }
+        joint_eff_ = read_current * DynamixelCurrentConvert[dynamixel_series_] * joint_inverse_;
     }
 }
 
@@ -187,7 +190,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
     dynamixel_ros_control::HomingResult result;
     bool success = true;
 
-    ROS_INFO("[%s] homing mode: [%d], homing direction: [%d].", motor_name_.c_str(), homing_mode_, homing_direction_);
+    ROS_INFO("[%s] homing mode: [%d], homing direction: [%.1f].", motor_name_.c_str(), homing_mode_, homing_direction_);
 
     switch(homing_mode_)
     {
@@ -224,9 +227,8 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                 }
 
                 // 4. set goal current to
-                ROS_INFO("[%s] set goal current to 1500mA", motor_name_.c_str());
-                uint16_t goal_current = (uint16_t)(2.0 / DynamixelCurrentConvert[dynamixel_series_]);
-                ROS_INFO("[%s] [%d]", motor_name_.c_str(), goal_current);
+                ROS_INFO("[%s] set goal current to %.3f (mA)...", motor_name_.c_str(), homing_current_limit_ * 1000.0);
+                uint16_t goal_current = (uint16_t)(homing_current_limit_ / DynamixelCurrentConvert[dynamixel_series_]);
                 if(packetHandler_->write2ByteTxRx(portHandler_, motor_id_,
                     DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_CURRENT], goal_current, &dxl_error) != COMM_SUCCESS)
                 {
@@ -235,10 +237,9 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     homing_as_->setSucceeded(result);
                 }
 
-                // 5. move homing direction with veloicty 1.5 rad/s (TBD)
-                ROS_INFO("[%s] set goal velocity to 0.002 rad/s", motor_name_.c_str());
-                int32_t goal_velocity = (int32_t)(0.004 / DynamixelVeolcityConvert[dynamixel_series_] * joint_gear_ratio_ * homing_direction_);
-                ROS_INFO("[%s] [%d]", motor_name_.c_str(), goal_velocity);
+                // 5. move homing direction with veloicty  (TBD)
+                ROS_INFO("[%s] set goal velocity to %.3f rad/s", motor_name_.c_str(), homing_max_speed_);
+                int32_t goal_velocity = (int32_t)(homing_max_speed_ / DynamixelVeolcityConvert[dynamixel_series_] * joint_gear_ratio_ * homing_direction_);
                 if(packetHandler_->write4ByteTxRx(portHandler_, motor_id_,
                     DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_VELOCITY], goal_velocity, &dxl_error) != COMM_SUCCESS)
                 {
@@ -247,7 +248,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     homing_as_->setSucceeded(result);
                 }
 
-                // 6. check moving status
+                // 6. move! and check moving status
                 while(ros::ok())
                 {
                     uint8_t moving = 0;
@@ -256,11 +257,9 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     {
                         ROS_ERROR("Failed to set goal velocity [%d] on [%s].", motor_id_, motor_name_.c_str());
                     }
-
-                    ROS_INFO("%d", moving);
                     if(moving == 0)
                     {
-                        ROS_INFO("Stop");
+                        ROS_INFO("[%s] limit detected...", motor_name_.c_str());
                         if(packetHandler_->write4ByteTxRx(portHandler_, motor_id_,
                             DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_VELOCITY], 0, &dxl_error) != COMM_SUCCESS)
                         {
@@ -270,15 +269,15 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     }
                 }
 
-                // 7. reboot
-                ROS_INFO("[%s] homing: reboot for homing.", motor_name_.c_str());
+                // 7. reboot for clear old position
+                ROS_INFO("[%s] homing: reboot for clear registers.", motor_name_.c_str());
                 if(packetHandler_->reboot(portHandler_, motor_id_, &dxl_error) != COMM_SUCCESS)
                 {
                     ROS_ERROR("Failed to reboot motor [%s]", motor_name_.c_str());
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
-                ros::Duration(0.25).sleep();
+                ros::Duration(0.3).sleep();
 
                 // 8. torque_on
                 ROS_INFO("[%s] torque enable...", motor_name_.c_str());
@@ -289,22 +288,21 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
-
                 ros::Duration(0.1).sleep();
 
                 // 9. Read current Position
-                uint32_t current_position = 0;
+                uint32_t position = 0;
                 if(packetHandler_->read4ByteTxRx(portHandler_, motor_id_,
-                    DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_POSITION], &current_position, &dxl_error) != COMM_SUCCESS)
+                    DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_POSITION], &position, &dxl_error) != COMM_SUCCESS)
                 {
                     ROS_ERROR("Failed to set goal velocity [%d] on [%s].", motor_id_, motor_name_.c_str());
                 }
 
-
-                ROS_INFO("=====  %f", (double)(current_position * M_PI / 501923.0 / joint_gear_ratio_ * joint_inverse_));
+                int32_t sign_position = (int32_t)position;
+                homing_offset_ = (double)(sign_position * DynamixelPositionConvert[motor_model_num_] / joint_gear_ratio_ * joint_inverse_);
+                ROS_INFO("[%s] homing offset: %f", motor_name_.c_str(), homing_offset_);
                 init_and_ready(true);
                 is_ready_ = true;
-
             }
             break;
 
@@ -325,8 +323,6 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
 
 bool DynamixelMotor::write(double cmd)
 {
-    //ROS_INFO("[%s] write", motor_name_.c_str());
-
     int param_length = 0;
     uint8_t param_goal_value[4] = {0, 0, 0, 0};
 
@@ -336,7 +332,7 @@ bool DynamixelMotor::write(double cmd)
             {
                 int16_t target_current = 0;
                 target_current = (int16_t)(cmd / DynamixelCurrentConvert[dynamixel_series_] * joint_inverse_);
-                ROS_INFO("[%s] %d %d", motor_name_.c_str(), target_current, DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_CURRENT]);
+                // ROS_INFO("[%s] %d %d", motor_name_.c_str(), target_current, DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_CURRENT]);
 
                 param_length = 2;
                 param_goal_value[0] = (uint8_t)(target_current >> 0);
@@ -363,7 +359,9 @@ bool DynamixelMotor::write(double cmd)
         case 4: // ext. position
             {
                 int32_t target_position = 0;
-                target_position = cmd / DynamixelPositionConvert[motor_model_num_] * joint_gear_ratio_ * joint_inverse_;
+                cmd = cmd + homing_offset_;
+
+                target_position = (cmd / DynamixelPositionConvert[motor_model_num_] * joint_gear_ratio_ * joint_inverse_);
 
                 param_length = 4;
                 param_goal_value[0] = DXL_LOBYTE(DXL_LOWORD(target_position));
@@ -374,6 +372,23 @@ bool DynamixelMotor::write(double cmd)
                     DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_POSITION], param_length, param_goal_value);
             }
             break;
+        case 5: // gripper, current_based position control
+            {
+                int32_t target_position = 0;
+                if(is_gripper_)
+                {
+                    target_position = (int32_t)((1.0 - cmd) * gripper_gap_size_);
+
+                    param_length = 4;
+                    param_goal_value[0] = DXL_LOBYTE(DXL_LOWORD(target_position));
+                    param_goal_value[1] = DXL_HIBYTE(DXL_LOWORD(target_position));
+                    param_goal_value[2] = DXL_LOBYTE(DXL_HIWORD(target_position));
+                    param_goal_value[3] = DXL_HIBYTE(DXL_HIWORD(target_position));
+                    groupBulkWrite_->addParam(motor_id_,
+                        DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_POSITION], param_length, param_goal_value);
+                }
+            }
+         break;
     }
 }
 

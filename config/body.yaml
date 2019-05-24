@@ -14,9 +14,15 @@ dynamixel_hw:
 # joint_name: match URDF joint_name
 # gear_ratio
 # inverse: control the direction of motors
-# profile_acceleration: (rad/s)
-# homing: is need the homing?
-# homing_mode: # 0: current base
+# profile_acceleration: (rad/s^2)
+# profile_velocity: (rad/s)
+
+# homing
+# enable: is need the homing?
+# mode: # 0: current base
+# direction: homing direction
+# max_speed: homing max_speed
+# current_limit: homing current limit
 
 body_rotate:
   id: 1
@@ -25,25 +31,37 @@ body_rotate:
   gear_ratio: 2.5
   inverse: 1.0
   profile_acceleration: 0.6
+  profile_velocity: 0.02
 
 elevation:
   id: 4
   operating_mode: 4
-  joint_name: elavation_joint
-  gear_ratio: 27.5
+  joint_name: elevation_joint
+  gear_ratio: 36.0
   inverse: 1.0
-  profile_acceleration: 1.0
-  homing: true
-  homing_mode: 0
-  homing_direction: 1.0
+  profile_acceleration: 0.1
+  profile_velocity: 0.02
+  homing:
+    enable: false
+    mode: 0
+    direction: 1.0
+    max_speed: 0.003
+    current_limit: 2.0
 
 arm_base:
   id: 5
   operating_mode: 4
   joint_name: arm_base_joint
-  gear_ratio: 1.0
+  gear_ratio: 58.5
   inverse: 1.0
-  profile_acceleration: 1.0
+  profile_acceleration: 0.1
+  profile_velocity: 0.02
+  homing:
+    enable: false
+    mode: 0
+    direction: 1.0
+    max_speed: 0.002
+    current_limit: 1.5
 
 arm1:
   id: 9
@@ -52,6 +70,7 @@ arm1:
   gear_ratio: 1.0
   inverse: 1.0
   profile_acceleration: 1.0
+  profile_velocity: 0.02
 
 arm2:
   id: 10
@@ -60,6 +79,7 @@ arm2:
   gear_ratio: 1.0
   inverse: -1.0
   profile_acceleration: 1.0
+  profile_velocity: 0.02
 
 arm3:
   id: 11
@@ -68,6 +88,7 @@ arm3:
   gear_ratio: 1
   inverse: -1.0
   profile_acceleration: 1.0
+  profile_velocity: 0.02
 
 arm4:
   id: 12
@@ -76,6 +97,7 @@ arm4:
   gear_ratio: 1
   inverse: -1.0
   profile_acceleration: 1.0
+  profile_velocity: 0.02
 
 arm5:
   id: 13
@@ -84,6 +106,7 @@ arm5:
   gear_ratio: 1.0
   inverse: -1.0
   profile_acceleration: 1.0
+  profile_velocity: 0.02
 
 arm6:
   id: 14
@@ -92,6 +115,7 @@ arm6:
   gear_ratio: 1.0
   inverse: 1.0
   profile_acceleration: 1.0
+  profile_velocity: 0.02
 
 gripper:
   id: 15
@@ -100,4 +124,9 @@ gripper:
   gear_ratio: 1.0
   inverse: 1.0
   profile_acceleration: 0
+  profile_velocity: 0.02
+  gripper:
+    enable: true
+    gap_size: 690
+    current_limit: 0.070
 

@@ -4,21 +4,9 @@
 
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="true"
                 output="screen"  args="joint_state_controller
-                                        body_rotate_controller
-                                        elevation_controller
-                                        arm_base_controller
-                                        arm1_controller
-                                        arm2_controller
-                                        "/>
+                                        arm_controller
+                                       gripper_controller
+                                       "/>
 </launch>
 
-<!-- body_rotate_controller
-                                       elevation_controller
-                                       arm_base_controller
-                                       arm1_controller
-                                       arm2_controller
-                                       arm3_controller
-                                       arm4_controller
-                                       arm5_controller
-                                       arm6_controller
-                                       gripper_controller -->
+<!-- arm_controller -->
