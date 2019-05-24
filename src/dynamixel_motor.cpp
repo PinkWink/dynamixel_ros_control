@@ -41,6 +41,7 @@ bool DynamixelMotor::init(int model_number, std::string name)
     pnh.getParam(name + "/inverse", joint_inverse_);
     pnh.getParam(name + "/profile_acceleration", profile_acceleration_);
     pnh.getParam(name + "/profile_velocity", profile_velocity_);
+    pnh.param<int>(name + "/origin_offset", origin_offset_, 0);
 
     pnh.param<bool>(name + "/homing/enable", need_homing_, false);
     if(need_homing_)
@@ -152,6 +153,7 @@ bool DynamixelMotor::update()
     {
         int32_t position = groupBulkRead_->getData(motor_id_,
                 DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_POSITION], 4);
+        position = position - origin_offset_;
 
         joint_pos_ = (position * DynamixelPositionConvert[motor_model_num_] / joint_gear_ratio_ * joint_inverse_) - homing_offset_;
 
@@ -159,6 +161,8 @@ bool DynamixelMotor::update()
         {
             joint_pos_ = (gripper_gap_size_ - joint_pos_) / gripper_gap_size_;
         }
+
+        // ROS_INFO("%s %d %d", motor_name_.c_str(), position, origin_offset_);
     }
 
     if(groupBulkRead_->isAvailable(motor_id_,
@@ -362,6 +366,9 @@ bool DynamixelMotor::write(double cmd)
                 cmd = cmd + homing_offset_;
 
                 target_position = (cmd / DynamixelPositionConvert[motor_model_num_] * joint_gear_ratio_ * joint_inverse_);
+                target_position = target_position + origin_offset_;
+
+                // ROS_WARN("%s %d %d", motor_name_.c_str(), target_position,  DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::GOAL_POSITION]);
 
                 param_length = 4;
                 param_goal_value[0] = DXL_LOBYTE(DXL_LOWORD(target_position));

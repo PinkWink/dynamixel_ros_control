@@ -48,6 +48,7 @@ private:
     int operating_mode_;
     double profile_acceleration_;
     double profile_velocity_;
+    int origin_offset_;
 
     boost::shared_ptr<actionlib::SimpleActionServer<dynamixel_ros_control::HomingAction>> homing_as_;
     bool need_homing_;
