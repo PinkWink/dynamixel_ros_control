@@ -16,6 +16,7 @@ wheel1:
   gear_ratio: 0.45454545
   inverse: -1.0
   profile_acceleration: 1.0
+  profile_velocity: 3.0
 
 wheel2:
   id: 2
@@ -24,6 +25,7 @@ wheel2:
   gear_ratio: 0.45454545
   inverse: -1.0
   profile_acceleration: 1.0
+  profile_velocity: 3.0
 
 wheel3:
   id: 3
@@ -32,3 +34,4 @@ wheel3:
   gear_ratio: 0.45454545
   inverse: -1.0
   profile_acceleration: 1.0
+  profile_velocity: 3.0
