@@ -4,8 +4,6 @@
 
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="true"
                 output="screen"  args="joint_state_controller
-                                       wheel1_controller
-                                       wheel2_controller
-                                       wheel3_controller
+                                       omni_base_controller
                                         "/>
 </launch>
