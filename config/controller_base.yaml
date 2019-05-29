@@ -17,8 +17,8 @@ joint_state_controller:
 omni_base_controller:
   type: omni_drive_controller/OmniDriveController
   wheel1: omni_wheel_1_joint
-  wheel2: omni_wheel_3_joint
-  wheel3: omni_wheel_2_joint
+  wheel2: omni_wheel_2_joint
+  wheel3: omni_wheel_3_joint
   wheel_separation: 0.282
   wheel_radius: 0.0635
   publish_cmd: false

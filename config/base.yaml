@@ -7,7 +7,8 @@ dynamixel_hw:
 # joint_name: match URDF joint_name
 # gear_ratio
 # inverse: control the direction of motors
-# profile_acceleration: (rad/s)
+# profile_acceleration: (rad/s^2)
+# profile_velocity: (rad/s)
 
 wheel1:
   id: 1
@@ -19,7 +20,7 @@ wheel1:
   profile_velocity: 3.0
 
 wheel2:
-  id: 2
+  id: 3
   operating_mode: 1
   joint_name: omni_wheel_2_joint
   gear_ratio: 0.45454545
@@ -28,7 +29,7 @@ wheel2:
   profile_velocity: 3.0
 
 wheel3:
-  id: 3
+  id: 2
   operating_mode: 1
   joint_name: omni_wheel_3_joint
   gear_ratio: 0.45454545
