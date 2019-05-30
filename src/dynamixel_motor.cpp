@@ -208,7 +208,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
-                ros::Duration(0.25).sleep();
+                ros::Duration(0.3).sleep();
 
                 // 2. set operating mode to velocity control
                 ROS_INFO("[%s] set operating mode to velocity...", motor_name_.c_str());
@@ -251,6 +251,8 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
+
+                ros::Duration(0.06).sleep();
 
                 // 6. move! and check moving status
                 while(ros::ok())
