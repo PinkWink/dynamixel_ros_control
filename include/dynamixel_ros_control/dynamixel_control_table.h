@@ -17,7 +17,13 @@ enum class DynamixelControlTableItem
 {
     OPERATING_MODE,
     VELOCITY_LIMIT,
+    EXTERNAL_PORT_MODE_1,
+    EXTERNAL_PORT_MODE_2,
+    EXTERNAL_PORT_MODE_3,
+    EXTERNAL_PORT_MODE_4,
     TORQUE_ENABLE,
+    VELOCITY_I_GAIN,
+    VELOCITY_P_GAIN,
     GOAL_CURRENT,
     GOAL_VELOCITY,
     PROFILE_ACCELERATION,
@@ -26,7 +32,11 @@ enum class DynamixelControlTableItem
     MOVING,
     PRESENT_CURRENT,
     PRESENT_VELOCITY,
-    PRESENT_POSITION
+    PRESENT_POSITION,
+    EXTERNAL_PORT_DATA_1,
+    EXTERNAL_PORT_DATA_2,
+    EXTERNAL_PORT_DATA_3,
+    EXTERNAL_PORT_DATA_4
 };
 
 static std::map<int, DynamixelSeries> DynamixelModel =
@@ -62,7 +72,7 @@ static std::map<DynamixelSeries, int> DynamixelReadLength =
     {DynamixelSeries::SERIES_ROBOTIS_HAND, 11},
     {DynamixelSeries::SERIES_DYNAMIXEL_X, 14},
     {DynamixelSeries::SERIES_DYNAMIXEL_PRO, 11},
-    {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, 14},
+    {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, 22},
 };
 
 static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> DynamixelControlTable =
@@ -115,7 +125,13 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
     {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, {
         {DynamixelControlTableItem::OPERATING_MODE,        11},
         {DynamixelControlTableItem::VELOCITY_LIMIT,        44},
+        {DynamixelControlTableItem::EXTERNAL_PORT_MODE_1,  56},
+        {DynamixelControlTableItem::EXTERNAL_PORT_MODE_2,  57},
+        {DynamixelControlTableItem::EXTERNAL_PORT_MODE_3,  58},
+        {DynamixelControlTableItem::EXTERNAL_PORT_MODE_4,  59},
         {DynamixelControlTableItem::TORQUE_ENABLE,         512},
+        {DynamixelControlTableItem::VELOCITY_I_GAIN,       524},
+        {DynamixelControlTableItem::VELOCITY_P_GAIN,       526},
         {DynamixelControlTableItem::GOAL_CURRENT,          550},
         {DynamixelControlTableItem::GOAL_VELOCITY,         552},
         {DynamixelControlTableItem::PROFILE_ACCELERATION,  556},
@@ -124,7 +140,11 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
         {DynamixelControlTableItem::MOVING,                570},
         {DynamixelControlTableItem::PRESENT_CURRENT,       574},
         {DynamixelControlTableItem::PRESENT_VELOCITY,      576},
-        {DynamixelControlTableItem::PRESENT_POSITION,      580}
+        {DynamixelControlTableItem::PRESENT_POSITION,      580},
+        {DynamixelControlTableItem::EXTERNAL_PORT_DATA_1,  600},
+        {DynamixelControlTableItem::EXTERNAL_PORT_DATA_2,  602},
+        {DynamixelControlTableItem::EXTERNAL_PORT_DATA_3,  604},
+        {DynamixelControlTableItem::EXTERNAL_PORT_DATA_4,  606}
     }},
 };
 

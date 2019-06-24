@@ -49,6 +49,8 @@ private:
     double profile_acceleration_;
     double profile_velocity_;
     int origin_offset_;
+    int velocity_p_gain_;
+    int velocity_i_gain_;
 
     boost::shared_ptr<actionlib::SimpleActionServer<dynamixel_ros_control::HomingAction>> homing_as_;
     bool need_homing_;
