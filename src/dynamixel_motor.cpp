@@ -28,10 +28,11 @@ DynamixelMotor::~DynamixelMotor()
 {
 }
 
-bool DynamixelMotor::init(int model_number, std::string name)
+bool DynamixelMotor::init(ros::NodeHandle& nh, ros::NodeHandle& pnh,
+                            int model_number, std::string name)
 {
-    ros::NodeHandle nh;
-    ros::NodeHandle pnh("~");
+    // ros::NodeHandle nh;
+    // ros::NodeHandle pnh("~");
     motor_name_ = name;
     motor_model_num_ = model_number;
     dynamixel_series_ = DynamixelModel[motor_model_num_];
@@ -44,8 +45,8 @@ bool DynamixelMotor::init(int model_number, std::string name)
     pnh.getParam(name + "/profile_acceleration", profile_acceleration_);
     pnh.getParam(name + "/profile_velocity", profile_velocity_);
     pnh.param<int>(name + "/origin_offset", origin_offset_, 0);
-    pnh.param<int>(name + "/velocity_gains/p", velocity_p_gain_, 6153);
-    pnh.param<int>(name + "/velocity_gains/i", velocity_i_gain_, 2209);
+    pnh.param<int>(name + "/velocity_gains/p", velocity_p_gain_, -1);
+    pnh.param<int>(name + "/velocity_gains/i", velocity_i_gain_, -1);
 
 
     pnh.param<bool>(name + "/homing/enable", need_homing_, false);
@@ -105,22 +106,27 @@ bool DynamixelMotor::init_and_ready(bool skip_read_register)
         return false;
     }
 
-    if(packetHandler_->write2ByteTxRx(portHandler_, motor_id_,
-            DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::VELOCITY_I_GAIN], velocity_i_gain_, &dxl_error) != COMM_SUCCESS)
+    if(velocity_i_gain_ != -1)
     {
-        ROS_ERROR("Failed to set velocity_i_gain [%d] on [%s].", motor_id_, motor_name_.c_str());
-        return false;
+        if(packetHandler_->write2ByteTxRx(portHandler_, motor_id_,
+                DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::VELOCITY_I_GAIN], velocity_i_gain_, &dxl_error) != COMM_SUCCESS)
+        {
+            ROS_ERROR("Failed to set velocity_i_gain [%d] on [%s].", motor_id_, motor_name_.c_str());
+            return false;
+        }
+        ROS_INFO("[%s] set velocity i gain to [%d].", motor_name_.c_str(), velocity_i_gain_);
     }
-    ROS_INFO("[%s] set velocity i gain to [%d].", motor_name_.c_str(), velocity_i_gain_);
 
-    if(packetHandler_->write2ByteTxRx(portHandler_, motor_id_,
-            DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::VELOCITY_P_GAIN], velocity_p_gain_, &dxl_error) != COMM_SUCCESS)
+    if(velocity_p_gain_ != -1)
     {
-        ROS_ERROR("Failed to set velocity_p_gain [%d] on [%s].", motor_id_, motor_name_.c_str());
-        return false;
+        if(packetHandler_->write2ByteTxRx(portHandler_, motor_id_,
+                DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::VELOCITY_P_GAIN], velocity_p_gain_, &dxl_error) != COMM_SUCCESS)
+        {
+            ROS_ERROR("Failed to set velocity_p_gain [%d] on [%s].", motor_id_, motor_name_.c_str());
+            return false;
+        }
+        ROS_INFO("[%s] set velocity p gain to [%d].", motor_name_.c_str(), velocity_p_gain_);
     }
-    ROS_INFO("[%s] set velocity p gain to [%d].", motor_name_.c_str(), velocity_p_gain_);
-
     // torque enable
     if(packetHandler_->write1ByteTxRx(portHandler_, motor_id_, DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::TORQUE_ENABLE], 1, &dxl_error) != COMM_SUCCESS)
     {

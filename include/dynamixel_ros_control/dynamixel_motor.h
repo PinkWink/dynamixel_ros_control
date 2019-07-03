@@ -19,7 +19,7 @@ public:
     ~DynamixelMotor();
 
 public:
-    bool init(int model_number, std::string name);
+    bool init(ros::NodeHandle& nh, ros::NodeHandle& pnh, int model_number, std::string name);
     bool update();
     bool write(double cmd);
     void stop();

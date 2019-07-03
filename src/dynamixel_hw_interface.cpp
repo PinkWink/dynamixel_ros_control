@@ -27,7 +27,7 @@ bool DynamixelHWInterface::is_ready()
     return result;
 }
 
-bool DynamixelHWInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
+bool DynamixelHWInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
 {
     // get port name
     std::string portName;
@@ -114,7 +114,7 @@ bool DynamixelHWInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot
         DynamixelMotor *motor = new DynamixelMotor(portHandler_, packetHandler_, groupBulkRead_, groupBulkWrite_);
         ROS_INFO("[%s] Found dynamixel motors on [%s]: ID [%d], Model Number [%s].",
             ros::this_node::getName().c_str(), dynamixel_hw[i].c_str(), (int)id, dynamixel_model_name[dxl_model_number].c_str());
-        motor->init(dxl_model_number, dynamixel_hw[i]);
+        motor->init(root_nh, robot_hw_nh, dxl_model_number, dynamixel_hw[i]);
         dynamixel_motors_.push_back(motor);
 
         // joint_state
