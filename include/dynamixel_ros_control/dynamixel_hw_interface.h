@@ -16,7 +16,7 @@ class DynamixelHWInterface: public hardware_interface::RobotHW
         ~DynamixelHWInterface();
 
     public:
-        virtual bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh);
+        virtual bool init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh);
         virtual void read(const ros::Time& time, const ros::Duration& period);
         virtual void write(const ros::Time& time, const ros::Duration& period);
         virtual bool prepareSwitch(const std::list<hardware_interface::ControllerInfo>& start_list, const std::list<hardware_interface::ControllerInfo>& stop_list);
