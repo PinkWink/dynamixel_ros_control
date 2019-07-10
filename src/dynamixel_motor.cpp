@@ -186,8 +186,6 @@ bool DynamixelMotor::update()
             joint_pos_ = (gripper_gap_size_ - joint_pos_) / gripper_gap_size_;
             ROS_INFO("%d", (int)joint_pos_);
         }
-
-        // ROS_INFO("%s %d %d", motor_name_.c_str(), position, origin_offset_);
     }
 
     // present velocity
@@ -394,8 +392,9 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     homing_as_->setSucceeded(result);
                 }
 
+
                 // 4. torque_on
-                ROS_INFO("[%s] torque enable...", motor_name_.c_str());
+		        ROS_INFO("[%s] torque enable...", motor_name_.c_str());
                 if(packetHandler_->write1ByteTxRx(portHandler_, motor_id_,
                     DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::TORQUE_ENABLE], 1, &dxl_error) != COMM_SUCCESS)
                 {
@@ -427,6 +426,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     {
                         ROS_ERROR("Failed to set external port data [%d] on [%s].", motor_id_, motor_name_.c_str());
                     }
+		            // ROS_INFO("%d %d %d %d", port_data[0], port_data[2], port_data[4], port_data[6]);
                     if(port_data[0] || port_data[2] || port_data[4] || port_data[6])
                     {
                         ROS_INFO("[%s] limit detected...", motor_name_.c_str());
@@ -524,7 +524,6 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     }
                     ros::Duration(0.0).sleep();
                 }
-
                 is_ready_ = true;
             }
             break;

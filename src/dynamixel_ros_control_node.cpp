@@ -42,12 +42,16 @@ class DynamixelROSControlNode
         void callback(const ros::TimerEvent& event)
         {
             if(dynamixels->is_ready())
+            {
                 dynamixels->read(ros::Time::now(), period);
+            }
 
             cm->update(ros::Time::now(), period);
 
             if(dynamixels->is_ready())
+            {
                 dynamixels->write(ros::Time::now(), period);
+            }
         }
 
     private:
