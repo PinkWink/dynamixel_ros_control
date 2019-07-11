@@ -603,7 +603,6 @@ bool DynamixelMotor::write(double cmd)
                 if(is_gripper_)
                 {
                     target_position = (int32_t)((1.0 - cmd) * gripper_gap_size_);
-                    ROS_INFO("target_position: %d", target_position);
 
                     param_length = 4;
                     param_goal_value[0] = DXL_LOBYTE(DXL_LOWORD(target_position));
