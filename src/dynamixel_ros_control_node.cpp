@@ -11,8 +11,7 @@ class DynamixelROSControlNode
             double control_frequency = 0.0;
             pnh.param<double>("rate", control_frequency, 100.0);
 
-
-            assert(dynamixels.init(nh_, pnh_));
+            assert(dynamixels.init(nh, pnh));
             ROS_INFO("[%s] wait for ready dynamixels...", ros::this_node::getName().c_str());
             while(ros::ok() && !dynamixels.is_ready())
             {
@@ -23,7 +22,7 @@ class DynamixelROSControlNode
             ros::Duration(1.0).sleep();
             ROS_INFO("[%s] ready. start controller...", ros::this_node::getName().c_str());
 
-            cm = boost::make_shared<controller_manager::ControllerManager>(&dynamixels, nh_);
+            cm = boost::make_shared<controller_manager::ControllerManager>(&dynamixels, nh);
             period = ros::Duration(1.0/control_frequency);
 
             loop_timer = nh.createTimer(period, &DynamixelROSControlNode::callback, this);
@@ -51,8 +50,6 @@ class DynamixelROSControlNode
         }
 
     private:
-        ros::NodeHandle nh_;
-        ros::NodeHandle pnh_;
         DynamixelHWInterface dynamixels;
         boost::shared_ptr<controller_manager::ControllerManager> cm;
         ros::Duration period;

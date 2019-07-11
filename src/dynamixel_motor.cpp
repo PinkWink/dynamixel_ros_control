@@ -60,7 +60,7 @@ bool DynamixelMotor::init(ros::NodeHandle& nh, ros::NodeHandle& pnh, int model_n
         ROS_INFO("[%s] motor need homing.", motor_name_.c_str());
         is_homing_ = false;
         homing_as_ = boost::make_shared<actionlib::SimpleActionServer<dynamixel_ros_control::HomingAction>>(nh, name + "/homing", boost::bind(&DynamixelMotor::execute_homing, this, _1), false);
-		homing_as_->start();
+        homing_as_->start();
 
         is_ready_ = false;
     }
@@ -286,7 +286,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     if(packetHandler_->read1ByteTxRx(portHandler_, motor_id_,
                         DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::MOVING], &moving, &dxl_error) != COMM_SUCCESS)
                     {
-                        ROS_ERROR("Failed to set goal velocity [%d] on [%s].", motor_id_, motor_name_.c_str());
+                        ROS_ERROR("Failed to get moving status [%d] on [%s].", motor_id_, motor_name_.c_str());
                     }
                     if(moving == 0)
                     {
@@ -310,7 +310,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
-                ros::Duration(0.3).sleep();
+                ros::Duration(0.4).sleep();
 
                 // 8. torque_on
                 ROS_INFO("[%s] torque enable...", motor_name_.c_str());
@@ -328,7 +328,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                 if(packetHandler_->read4ByteTxRx(portHandler_, motor_id_,
                     DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::PRESENT_POSITION], &position, &dxl_error) != COMM_SUCCESS)
                 {
-                    ROS_ERROR("Failed to set goal velocity [%d] on [%s].", motor_id_, motor_name_.c_str());
+                    ROS_ERROR("Failed to get present position [%d] on [%s].", motor_id_, motor_name_.c_str());
                 }
 
                 int32_t sign_position = (int32_t)position;
@@ -361,40 +361,39 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     homing_as_->setSucceeded(result);
                 }
 
-                // 3. set port mode to digital input pull up
-                ROS_INFO("[%s] set port mode to digital input (pul up)...", motor_name_.c_str());
+                // 3. set port mode to digital input pull down
+                ROS_INFO("[%s] set port mode to digital input (pul down)...", motor_name_.c_str());
                 if(packetHandler_->write1ByteTxRx(portHandler_, motor_id_,
                         DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::EXTERNAL_PORT_MODE_1], 3, &dxl_error) != COMM_SUCCESS)
                 {
-                    ROS_ERROR("Failed to set port mode to digital input (pul up) [%d] on [%s].", motor_id_, motor_name_.c_str());
+                    ROS_ERROR("Failed to set port mode to digital input (pul down) [%d] on [%s].", motor_id_, motor_name_.c_str());
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
                 if(packetHandler_->write1ByteTxRx(portHandler_, motor_id_,
                         DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::EXTERNAL_PORT_MODE_2], 3, &dxl_error) != COMM_SUCCESS)
                 {
-                    ROS_ERROR("Failed to set port mode to digital input (pul up) [%d] on [%s].", motor_id_, motor_name_.c_str());
+                    ROS_ERROR("Failed to set port mode to digital input (pul down) [%d] on [%s].", motor_id_, motor_name_.c_str());
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
                 if(packetHandler_->write1ByteTxRx(portHandler_, motor_id_,
                         DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::EXTERNAL_PORT_MODE_3], 3, &dxl_error) != COMM_SUCCESS)
                 {
-                    ROS_ERROR("Failed to set port mode to digital input (pul up) [%d] on [%s].", motor_id_, motor_name_.c_str());
+                    ROS_ERROR("Failed to set port mode to digital input (pul down) [%d] on [%s].", motor_id_, motor_name_.c_str());
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
                 if(packetHandler_->write1ByteTxRx(portHandler_, motor_id_,
                         DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::EXTERNAL_PORT_MODE_4], 3, &dxl_error) != COMM_SUCCESS)
                 {
-                    ROS_ERROR("Failed to set port mode to digital input (pul up) [%d] on [%s].", motor_id_, motor_name_.c_str());
+                    ROS_ERROR("Failed to set port mode to digital input (pul down) [%d] on [%s].", motor_id_, motor_name_.c_str());
                     result.done = false;
                     homing_as_->setSucceeded(result);
                 }
 
-
                 // 4. torque_on
-		        ROS_INFO("[%s] torque enable...", motor_name_.c_str());
+                ROS_INFO("[%s] torque enable...", motor_name_.c_str());
                 if(packetHandler_->write1ByteTxRx(portHandler_, motor_id_,
                     DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::TORQUE_ENABLE], 1, &dxl_error) != COMM_SUCCESS)
                 {
@@ -424,9 +423,9 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                     if(packetHandler_->readTxRx(portHandler_, motor_id_,DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::EXTERNAL_PORT_DATA_1], 8,
                         port_data, &dxl_error) != COMM_SUCCESS)
                     {
-                        ROS_ERROR("Failed to set external port data [%d] on [%s].", motor_id_, motor_name_.c_str());
+                        ROS_ERROR("Failed to get external port data [%d] on [%s].", motor_id_, motor_name_.c_str());
                     }
-		            // ROS_INFO("%d %d %d %d", port_data[0], port_data[2], port_data[4], port_data[6]);
+                    // ROS_INFO("%d %d %d %d", port_data[0], port_data[2], port_data[4], port_data[6]);
                     if(port_data[0] || port_data[2] || port_data[4] || port_data[6])
                     {
                         ROS_INFO("[%s] limit detected...", motor_name_.c_str());
@@ -469,7 +468,7 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                         if(packetHandler_->readTxRx(portHandler_, motor_id_,DynamixelControlTable[dynamixel_series_][DynamixelControlTableItem::EXTERNAL_PORT_DATA_1], 8,
                             port_data, &dxl_error) != COMM_SUCCESS)
                         {
-                            ROS_ERROR("Failed to set external port data [%d] on [%s].", motor_id_, motor_name_.c_str());
+                            ROS_ERROR("Failed to get external port data [%d] on [%s].", motor_id_, motor_name_.c_str());
                         }
                         if(port_data[0] == 1)
                         {
