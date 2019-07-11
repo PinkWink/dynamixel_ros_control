@@ -31,7 +31,6 @@ class DynamixelHWInterface: public hardware_interface::RobotHW
         dynamixel::GroupBulkRead *groupBulkRead_;
         dynamixel::GroupBulkWrite *groupBulkWrite_;
 
-        //std::map<int, DynamixelMotor*> mapDynamixelMotors_;
         std::vector<DynamixelMotor*> dynamixel_motors_;
 
         hardware_interface::JointStateInterface jnt_state_interface_;
