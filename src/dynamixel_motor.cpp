@@ -184,7 +184,6 @@ bool DynamixelMotor::update()
         if(is_gripper_)
         {
             joint_pos_ = (gripper_gap_size_ - joint_pos_) / gripper_gap_size_;
-            ROS_INFO("%d", (int)joint_pos_);
         }
     }
 
