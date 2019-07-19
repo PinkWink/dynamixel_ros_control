@@ -26,8 +26,6 @@ def main():
     client = actionlib.SimpleActionClient('%s/homing'%target_motor, HomingAction)
     client.wait_for_server()
 
-    rospy.loginfo("tttt")
-
     goal = HomingActionGoal()
     client.send_goal(goal, done_cb=func_done, feedback_cb=func_feedback, active_cb=func_active)
 

@@ -22,6 +22,7 @@ enum class DynamixelControlTableItem
     EXTERNAL_PORT_MODE_3,
     EXTERNAL_PORT_MODE_4,
     TORQUE_ENABLE,
+    HARDWARE_ERROR_STATUS,
     VELOCITY_I_GAIN,
     VELOCITY_P_GAIN,
     GOAL_CURRENT,
@@ -80,6 +81,7 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
     {DynamixelSeries::SERIES_ROBOTIS_HAND, {
         {DynamixelControlTableItem::OPERATING_MODE,        11},
         {DynamixelControlTableItem::VELOCITY_LIMIT,        32},
+        {DynamixelControlTableItem::HARDWARE_ERROR_STATUS, 70},
         {DynamixelControlTableItem::TORQUE_ENABLE,         562},
         {DynamixelControlTableItem::GOAL_CURRENT,          604},
         {DynamixelControlTableItem::GOAL_VELOCITY,         600},
@@ -96,6 +98,7 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
         {DynamixelControlTableItem::OPERATING_MODE,        11},
         {DynamixelControlTableItem::VELOCITY_LIMIT,        44},
         {DynamixelControlTableItem::TORQUE_ENABLE,         64},
+        {DynamixelControlTableItem::HARDWARE_ERROR_STATUS, 70},
         {DynamixelControlTableItem::GOAL_CURRENT,          102},
         {DynamixelControlTableItem::GOAL_VELOCITY,         104},
         {DynamixelControlTableItem::PROFILE_ACCELERATION,  108},
@@ -119,7 +122,8 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
         {DynamixelControlTableItem::MOVING,                610},
         {DynamixelControlTableItem::PRESENT_CURRENT,       621},
         {DynamixelControlTableItem::PRESENT_VELOCITY,      615},
-        {DynamixelControlTableItem::PRESENT_POSITION,      611}
+        {DynamixelControlTableItem::PRESENT_POSITION,      611},
+        {DynamixelControlTableItem::HARDWARE_ERROR_STATUS, 892},
     }},
 
     {DynamixelSeries::SERIES_DYNAMIXEL_PRO_PLUS, {
@@ -130,6 +134,7 @@ static std::map<DynamixelSeries, std::map<DynamixelControlTableItem, int>> Dynam
         {DynamixelControlTableItem::EXTERNAL_PORT_MODE_3,  58},
         {DynamixelControlTableItem::EXTERNAL_PORT_MODE_4,  59},
         {DynamixelControlTableItem::TORQUE_ENABLE,         512},
+        // {DynamixelControlTableItem::HARDWARE_ERROR_STATUS, 518},
         {DynamixelControlTableItem::VELOCITY_I_GAIN,       524},
         {DynamixelControlTableItem::VELOCITY_P_GAIN,       526},
         {DynamixelControlTableItem::GOAL_CURRENT,          550},
