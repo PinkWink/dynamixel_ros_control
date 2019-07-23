@@ -326,12 +326,12 @@ void DynamixelMotor::execute_homing(const dynamixel_ros_control::HomingGoalConst
                 }
 
                 int32_t sign_position = (int32_t)position;
+                ROS_INFO("[%s] origin_offset: %d, current position: %d, diff: %d", motor_name_.c_str(), origin_offset_, sign_position, origin_offset_ - sign_position);
                 if(std::abs(origin_offset_ - sign_position) > 8000)
                 {
-                    ROS_ERROR("[%s] This motor has some error about origin offset. Please check the offset uing other program...")
+                    ROS_ERROR("[%s] This motor has some error about origin offset. Please check the offset uing other program...", motor_name_.c_str());
                     success = false;
                 }
-                ROS_INFO("origin_offset: %d,   position: %d,    diff:   %d", origin_offset_, sign_position, );
 
                 if(success)
                 {
