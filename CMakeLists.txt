@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   roscpp
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -138,9 +139,9 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node
-src/dynamixel_ros_control_node.cpp
-src/dynamixel_hw_interface.cpp
-src/dynamixel_motor.cpp
+  src/dynamixel_ros_control_node.cpp
+  src/dynamixel_hw_interface.cpp
+  src/dynamixel_motor.cpp
 )
 
 ## Rename C++ executable without prefix
@@ -152,6 +153,7 @@ src/dynamixel_motor.cpp
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${PROJECT_NAME}_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
