@@ -60,7 +60,7 @@ class DynamixelROSControlNode
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "dynamixel_ros_control_node");
-    ros::AsyncSpinner spinner(2);
+    ros::AsyncSpinner spinner(3);
 
     ros::NodeHandle nh;
     ros::NodeHandle pnh("~");
