@@ -187,7 +187,7 @@ bool DynamixelMotor::update()
 
         if(is_gripper_)
         {
-            joint_pos_ = (gripper_gap_size_ - joint_pos_) / gripper_gap_size_;
+            joint_pos_ = (position + gripper_gap_size_) / gripper_gap_size_;
         }
     }
 
@@ -574,7 +574,7 @@ bool DynamixelMotor::write(double cmd)
                 int32_t target_position = 0;
                 if(is_gripper_)
                 {
-                    target_position = (int32_t)((1.0 - cmd) * gripper_gap_size_);
+                    target_position = origin_offset_ - (int32_t)((1.0 - cmd) * gripper_gap_size_);
 
                     param_length = 4;
                     param_goal_value[0] = DXL_LOBYTE(DXL_LOWORD(target_position));
