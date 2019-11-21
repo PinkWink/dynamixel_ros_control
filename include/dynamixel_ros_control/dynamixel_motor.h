@@ -65,6 +65,7 @@ private:
     bool is_gripper_;
     double gripper_gap_size_;
     double gripper_current_limit_;
+    double gripper_stroke_;
 
     double joint_pos_;
     double joint_vel_;

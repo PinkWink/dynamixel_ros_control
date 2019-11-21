@@ -68,6 +68,7 @@ bool DynamixelMotor::init(ros::NodeHandle& nh, ros::NodeHandle& pnh, int model_n
     {
         pnh.param<double>(name + "/gripper/gap_size", gripper_gap_size_, 0.0);
         pnh.param<double>(name + "/gripper/current_limit", gripper_current_limit_, 1.0);
+        pnh.param<double>(name + "/gripper/stroke", gripper_stroke_, 1.0);
     }
 
     return init_and_ready(false);
@@ -187,7 +188,8 @@ bool DynamixelMotor::update()
 
         if(is_gripper_)
         {
-            joint_pos_ = (position + gripper_gap_size_) / gripper_gap_size_;
+            double pos = ((position + gripper_gap_size_) / gripper_gap_size_);
+            joint_pos_ = (1.0 - pos) * gripper_stroke_ / 2.0;
         }
     }
 
@@ -574,7 +576,8 @@ bool DynamixelMotor::write(double cmd)
                 int32_t target_position = 0;
                 if(is_gripper_)
                 {
-                    target_position = origin_offset_ - (int32_t)((1.0 - cmd) * gripper_gap_size_);
+                    if(cmd < 0.0 || cmd > (gripper_stroke_ / 2.0)) { return true; }
+                    target_position = origin_offset_ - (int32_t)((cmd / gripper_stroke_ * 2.0) * gripper_gap_size_);
 
                     param_length = 4;
                     param_goal_value[0] = DXL_LOBYTE(DXL_LOWORD(target_position));
@@ -587,6 +590,8 @@ bool DynamixelMotor::write(double cmd)
             }
             break;
     }
+
+    return true;
 }
 
 void DynamixelMotor::stop()
